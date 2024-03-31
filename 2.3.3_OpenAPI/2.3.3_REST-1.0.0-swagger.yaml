@@ -1,0 +1,489 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/JAVIERGARCIAHCONTACT/IntroSwagger/1.0.0
+info:
+  description: Example of API documentation with SwaggerHub
+  version: "1.0.0"
+  title: "2.3.3_REST"
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: admins
+    description: Secured Admin-only calls
+  - name: developers
+    description: Operations available to regular developers
+paths:
+  /blogs:
+    get:
+      tags:
+        - developers
+      summary: Gets all the Blogs
+      description: >
+        Returns all the Blogs in the response
+      operationId: getAllBlogs
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Blog'
+        '400':
+          description: bad input parameter
+  /blogs/{id}:
+    get:
+        tags:
+          - developers
+        summary: Gets a Blog by ID
+        description: >
+          If the given ID matches that of one of the Blogs
+          in the DB, it returns it in the response
+        operationId: getBlogById
+        parameters:
+          - name: id
+            in: path
+            description: Blog ID
+            required: true
+            schema:
+              type: string
+              format: uuid
+        responses:
+          '200':
+            description: Successful operation
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Blog'
+          '400':
+            description: bad input parameter
+          '404':
+            description: resource requested does not exist
+  /blogs/{id}/articles:
+    get:
+      tags:
+        - developers
+      summary: Gets all the articles of a given by ID blog
+      description: >
+        If the given ID matches a Blog in the DB, it returns all
+        the Articles of that Blog in the response
+      operationId: getArticlesByBlog
+      parameters:
+        - name: id
+          in: path
+          description: Blog ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Article'
+        '400':
+          description: bad input parameter
+  /projects/{id}:
+    get:
+      tags:
+        - developers
+      summary: Gets a Project by ID
+      description: >
+        If the given ID matches that of one of the Projects
+        in the DB, it returns it in the response
+      operationId: getProjectById
+      parameters:
+        - name: id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '400':
+          description: bad input parameter
+        '404':
+          description: resource requested does not exist
+    delete:
+      tags:
+        - admins
+      summary: Deletes a Project by ID
+      description: >
+        If the given ID matches that of one of the Projects
+        in the DB, it deletes it
+      operationId: deleteProjectById
+      parameters:
+        - name: id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+        '401':
+          description: Authorization information is missing or invalid
+  /users:
+    post:
+      tags:
+        - admins
+      summary: creates a new user
+      operationId: createUser
+      description: |
+        Creates a new user in the system
+      responses:
+        '201':
+          description: User created
+        '400':
+          description: invalid input, object invalid
+        '401':
+          description: Authorization information is missing or invalid
+        '409':
+          description: an existing User already exists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        description: User to add
+  /articles:
+    get:
+      tags:
+        - developers
+      summary: searches for articles 
+      operationId: searchArticles
+      description: |
+        By passing in the appropriate options, you can search for
+        available articles in the system
+      parameters:
+        - in: query
+          name: searchString
+          description: pass an optional search string for looking up Articles
+          required: false
+          schema:
+            type: string
+            example: 'title=What is API REST?'
+        - in: query
+          name: skip
+          description: number of records to skip for pagination
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+        - in: query
+          name: limit
+          description: maximum number of records to return
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            maximum: 50
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Article'
+        '400':
+          description: bad input parameter
+        '404':
+            description: the blog whose articles are requested does not exist
+    post:
+      tags:
+        - admins
+      summary: adds an article
+      operationId: addArticle
+      description: Adds an article to the system
+      responses:
+        '201':
+          description: Article created
+        '400':
+          description: invalid input, object invalid
+        '401':
+          description: authorization information is missing or invalid
+        '409':
+          description: an existing Article already exists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Article'
+        description: Article to add
+  /articles/{id}:
+    get:
+      tags:
+        - developers
+      summary: Gets an Article by ID
+      description: >
+        If the given ID matches that of one of the Articles
+        in the DB, it returns it in the response
+      operationId: getArticleById
+      parameters:
+        - name: id
+          in: path
+          description: Article ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Article'
+        '400':
+          description: bad input parameter
+        '404':
+          description: resource requested does not exist
+    delete:
+      tags:
+        - admins
+      summary: Deletes a Article by ID
+      description: >
+        If the given ID matches that of one of the Article
+        in the DB, it deletes it
+      operationId: deleteArticleById
+      parameters:
+        - name: id
+          in: path
+          description: Article ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+        '401':
+          description: Authorization information is missing or invalid
+    put:
+      tags:
+        - developers
+      summary: Updates an Article by ID
+      description: >
+        If the given ID matches that of one of the Articles
+        in the DB, it updates it
+      operationId: putArticleById
+      parameters:
+        - name: id
+          in: path
+          description: Article ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Article updated
+        '201':
+          description: Article created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Article'
+              example:
+                id: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
+                title: 'Title of the Article to be updated'
+                abstract: 'This field has indeed changed'
+                content: 'This field should remain the same'
+                tags: {name: 'API', label: 'API', date: '2017-07-21T17:32:28Z'}
+        '400':
+          description: bad input parameter
+        '401':
+          description: Authorization information is missing or invalid
+        '404':
+          description: resource requested does not exist
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Article'
+            example:
+              id: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
+              title: 'Title of the Article to be updated'
+              abstract: 'This field is supposed to change'
+              content: 'This field should remain the same'
+              tags: {name: 'API', label: 'API', date: '2017-07-21T17:32:28Z'}
+        description: Article to be updated, with its new values
+components:
+  schemas:
+    Article:
+      type: object
+      required:
+        - id
+        - title
+        - abstract
+        - content
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        title:
+          type: string
+          example: 'What is API REST?'
+        abstract:
+          type: string
+          example: 'REST is a paradigm used in communication between applications'
+        content:
+          type: string
+          example: 'When used in API design, REST provides high compatibility'
+        tags:
+          $ref: '#/components/schemas/Tag'
+    Tag:
+      type: object
+      required:
+        - name
+        - label
+        - date
+      properties:
+        name:
+          type: string
+          example: 'API'
+        label:
+          type: string
+          example: 'API'
+        date:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+    User:
+      type: object
+      required: 
+        - id
+        - nick
+        - name
+        - phone
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
+        nick:
+          type: string
+          example: 'Juanan12'
+        name:
+          type: string
+          example: 'Juan'
+        phone:
+          $ref: '#/components/schemas/Phone'
+    Phone:
+      required:
+        - value
+        - type
+      properties:
+        value:
+          type: string
+          example: '666778899'
+        type:
+          type: string
+          example: 'movile'
+    Blog:
+      required:
+        - id
+        - title
+        - date
+        - articles
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
+        title:
+          type: string
+          example: 'Web Development'
+        date:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+        articles:
+          $ref: '#/components/schemas/Article'
+    Detail:
+      required:
+        - date
+        - content
+        - type
+        - budget
+      properties:
+        date:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+        content:
+          type: string
+          example: 'DB migration'
+        type:
+          type: string
+          example: 'Systems'
+        budget:
+          type: number
+          format: float
+          example: 20050.40
+    Code:
+      required:
+        - id
+        - package
+        - file
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
+        package:
+          type: string
+          example: 'com.app.Cats'
+        file:
+          type: string
+          format: binary
+          example: '001010101001010010101010100101'
+    Project:
+      required:
+        - id
+        - description
+        - language
+        - open
+        - details
+        - codes
+      properties:  
+        id:
+          type: string
+          format: uuid
+          example: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
+        description:
+          type: string
+          example: 'Integration of the adquired systems in the existing ecosystem'
+        language:
+          type: string
+          enum: [Java, Python, JS]
+          example: 'Java'
+        open:
+          type: boolean
+          example: true
+        details:
+          $ref: '#/components/schemas/Detail'
+        codes:
+          $ref: '#/components/schemas/Code'
